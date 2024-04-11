@@ -3,14 +3,11 @@ import { Entity, Column, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
 
 @Entity()
 export class Channel {
-  @PrimaryGeneratedColumn()
-  id: UUID;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column()
   channel_name: string;
-
-  @Column()
-  description: string;
 
   @Column()
   created: Date;

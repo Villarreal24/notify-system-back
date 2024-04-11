@@ -1,8 +1,8 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { User } from '../db/entities/user.entity'; // Importa la entidad aquí
-import { Category } from '../db/entities/category.entity';
-import { Channel } from '../db/entities/channel.entity';
-import { Logs } from '../db/entities/logs.entity';
+import { Users } from './entities/users.entity'; // Importa la entidad aquí
+import { Category } from './entities/category.entity';
+import { Channel } from './entities/channel.entity';
+import { Logs } from './entities/logs.entity';
 import * as fs from 'fs';
 
 console.log("ENV: ", process.env.DB_HOST)
@@ -18,7 +18,7 @@ const databaseConfig: TypeOrmModuleOptions = {
 //   username: process.env.DB_USER,
 //   password: process.env.DB_PASSWORD,
 //   database: process.env.DB_NAME,
-  entities: [User, Category, Channel, Logs], // Añade la entidad aquí
+  entities: [Users, Category, Channel, Logs], // Añade la entidad aquí
   synchronize: true,
   ssl: {
     rejectUnauthorized: false // For production is required to add the certificate

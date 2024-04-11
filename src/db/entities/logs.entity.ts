@@ -1,10 +1,9 @@
-import { UUID } from 'crypto';
 import { Entity, Column, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
 
 @Entity()
 export class Logs {
-  @PrimaryGeneratedColumn()
-  id: UUID;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   user_name: string;
@@ -18,11 +17,11 @@ export class Logs {
   @Column()
   message: string;
 
-  @Column()
-  channel_name: string;
+  @Column('json')
+  channels: string[];
 
   @Column()
-  category_name: string;
+  category: string;
 
   @Column()
   created: Date;
