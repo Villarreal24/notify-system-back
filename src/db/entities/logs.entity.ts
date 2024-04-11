@@ -1,8 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Timestamp, CreateDateColumn } from 'typeorm';
 
 @Entity()
 export class Logs {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
@@ -17,12 +17,12 @@ export class Logs {
   @Column()
   message: string;
 
-  @Column('json')
-  channels: string[];
-
   @Column()
   category: string;
 
-  @Column()
+  @Column('text', { array: true })
+  channels: string[];
+
+  @CreateDateColumn({ type: 'timestamp' })
   created: Date;
 }

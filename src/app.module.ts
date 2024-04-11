@@ -9,7 +9,10 @@ import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true
+    }),
     TypeOrmModule.forRoot(databaseConfig),
     NotificationModule
   ],

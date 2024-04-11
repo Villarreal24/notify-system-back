@@ -15,70 +15,50 @@ export class NotificationService {
     private readonly userRepository: Repository<Users>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-    @InjectRepository(Channel)
-    private readonly channelRepository: Repository<Channel>
   ) {}
-
-  getHello(): string {
-    return 'Hello World from notification!';
-  }
 
   async getAllCategories(): Promise<Category[]> {
     try {
       return await this.categoryRepository.find();
     } catch (error) {
       // MANAGE ERRORS
-      throw new Error('No se pudieron obtener los canales');
+      throw new Error('Error something failed, try again');
     }
   }
 
-  async getAllChannels(): Promise<Channel[]> {
+  async getAllLogs(): Promise<Logs[]> {
     try {
-      const channels = await this.channelRepository.find();
-      return channels;
+      const logs = await this.logsRepository.find();
+      return logs;
     } catch (error) {
       // MANAGE ERRORS
-      throw new Error('No se pudieron obtener los canales');
+      throw new Error('Error something failed, try again');
     }
   }
-
-  // async buscarPorCategoria(formData: any): Promise<User> {
-  //   const { category, message } = formData
-  //   console.log("DATA: ", formData)
-  //   // const entityManager = getManager();
-  //   // const query = `SELECT * FROM users WHERE ${category} = ANY(categories)`;
-
-  //   // return await entityManager.query(query, [category]);
-  //   const response = await this.userRepository.find();
-  //   console.log(response)
-  //   return response
-  // }
 
   async sendNotification(formData: any): Promise<any> {
     try {
-    console.log("DATA: ", formData)
-    const { category, message } = formData
-    // Obtener los usuarios que coinciden con la categoría
-    const users = await this.userRepository.createQueryBuilder('user')
-    .where('user.categories @> ARRAY[:category]', { category: [category] })
-    .getMany();
+      const { category, message } = formData
+      // ==== GET USERS THAT MATCHE´S WITH THE CATEGORY =====
+      const users = await this.userRepository.createQueryBuilder('user')
+      .where(':category = ANY(user.categories)', { category: category })
+      .getMany();
+      
+      // ==== SAVE DATA OF EACH USER ON "LOGS" TABLE ====
+      for (const user of users) {
+        const log = new Logs();
+        log.user_name = user.user_name,
+        log.email = user.email,
+        log.phone_number = user.phone_number,
+        log.category = category;
+        log.message = message;
+        log.channels = user.channels
+        await this.logsRepository.save(log);
+      }
 
-    console.log("users: ", users)
-    
-    // Guardar cada usuario en la tabla de logs junto con el mensaje
-    for (const user of users) {
-      const log = new Logs();
-      // log.userId = user.id;
-      log.user_name = user.user_name,
-      log.email = user.email,
-      log.phone_number = user.phone_number,
-      log.category = category;
-      log.message = message;
-      await this.logsRepository.save(log);
-    }
+      return { success: true, message: 'Notificacion sent successfully' };
     } catch (error) {
-      console.error("Error al enviar la notificación:", error);
-      // Puedes lanzar una excepción aquí si deseas propagarla hacia arriba
+      console.error("Error to send notification:", error);
     }
   }
 }
